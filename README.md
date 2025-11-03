@@ -4,7 +4,7 @@
 
 This demo uses AWS Aurora PostgreSQL with Next.js to fetch movies from the database. It is able to securely connect to Aurora PostgreSQL without using hardcoded access tokens through Vercel's [OIDC Federation](https://vercel.com/docs/security/secure-backend-access/oidc) and RDS IAM authentication.
 
-**Demo:** https://aurora-postgresql.vercel.app
+**Demo:** TK
 
 ## Requirements
 
