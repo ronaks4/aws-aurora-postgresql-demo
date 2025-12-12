@@ -16,7 +16,7 @@ Once the process is complete, you can clone the newly created GitHub repository 
 
 ## Requirements
 
-- Installed Aurora PostgreSQL. You can do that via [![Vercel Marketplace](https://vercel.com/marketplace/aws)]
+- Installed Aurora PostgreSQL. You can do that via [Vercel Marketplace](https://vercel.com/marketplace/aws)
 
 ## Local Setup
 
