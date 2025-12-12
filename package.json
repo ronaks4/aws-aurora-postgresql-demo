@@ -5,9 +5,12 @@
     "build": "next build",
     "start": "next start",
     "db:seed": "npx tsx lib/db/seed.ts",
-    "db:migrate": "npx tsx lib/db/migrate.ts"
+    "db:migrate": "npx tsx lib/db/migrate.ts",
+    "load-test-reads": "k6 run scripts/load-test-reads.ts",
+    "load-test-writes": "k6 run scripts/load-test-writes.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-sts": "^3.948.0",
     "@aws-sdk/rds-signer": "^3.705.0",
     "@radix-ui/react-slot": "^1.1.0",
     "@types/pg": "^8.11.10",
@@ -24,6 +27,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@types/k6": "^1.4.0",
     "@types/node": "^22.10.1",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.1",
