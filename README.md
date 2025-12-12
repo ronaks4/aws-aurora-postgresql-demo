@@ -5,8 +5,7 @@ This demo uses AWS Aurora PostgreSQL with Next.js to fetch movies from the datab
 [![This is an alt text.](/public/Vercel-AWS-GitHub-apg.png)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Faws-aurora-postgresql-demo&project-name=aws-aurora-postgresql-demo&repository-name=aws-aurora-postgresql-demo&products=%5B%7B%22type%22%3A%22integration%22%2C%22integrationSlug%22%3A%22aws%22%2C%22productSlug%22%3A%22aws-apg%22%2C%22protocol%22%3A%22storage%22%7D%5D)
 
 **Demo:**
-QQQQQ
-[(https://aws-vercel-aurora-postgresql-demo.vercel.app/)](https://aws-vercel-aurora-postgresql-demo.vercel.app/)
+[View Demo](https://aws-aurora-postgresql-demo.labs.vercel.dev)
 
 **Getting Started:**
 Click the "Deploy" button to clone this repo, create a new Vercel project, setup the AWS integration, and provision a new Aurora PostgreSQL database:
