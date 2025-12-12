@@ -34,7 +34,7 @@ export async function queryMovies(): Promise<Movie[]> {
     id: movie.id,
     title: movie.title,
     score: movie.score,
-    lastVoteTime: new Date(movie.lastVoteTime),
+    lastVoteTime: new Date(),
     hasVoted: false,
   }));
 }
