@@ -11,6 +11,7 @@ export async function getToken() {
   }
 
   const token = await fetchAuthToken();
+  cachedToken = token;
   return token;
 }
 
