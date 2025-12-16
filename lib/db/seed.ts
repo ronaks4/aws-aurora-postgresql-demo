@@ -1,8 +1,10 @@
 import fs from "fs";
 import path from "path";
 import csv from "csv-parser";
-import { closeConnection, getConnection } from "./db";
 import { config } from "dotenv";
+import { Signer } from "@aws-sdk/rds-signer";
+import { awsCredentialsProvider } from "@vercel/functions/oidc";
+import { Client } from "pg";
 
 config({ path: path.resolve(process.cwd(), ".env.local") });
 
@@ -34,38 +36,58 @@ async function readMovieTitlesFromCSV(): Promise<string[]> {
 }
 
 async function main() {
-  const pool = await getConnection();
-  const movieTitles = await readMovieTitlesFromCSV();
+  const signer = new Signer({
+    hostname: process.env.PGHOST!,
+    port: Number(process.env.PGPORT),
+    username: process.env.PGUSER!,
+    region: process.env.AWS_REGION!,
+    credentials: awsCredentialsProvider({
+      roleArn: process.env.AWS_ROLE_ARN!,
+      clientConfig: { region: process.env.AWS_REGION! },
+    }),
+  });
+  const client = new Client({
+    host: process.env.PGHOST!,
+    user: process.env.PGUSER!,
+    database: process.env.PGDATABASE || "postgres",
+    password: () => signer.getAuthToken(),
+    port: Number(process.env.PGPORT),
+    ssl: { rejectUnauthorized: false },
+  });
+  try {
+    const movieTitles = await readMovieTitlesFromCSV();
 
-  console.log(`Inserting ${movieTitles.length} movies...`);
+    console.log(`Inserting ${movieTitles.length} movies...`);
 
-  const defaultDate = new Date("2024-12-07");
-  const batchSize = 500;
+    const defaultDate = new Date("2024-12-07");
+    const batchSize = 500;
 
-  for (let i = 0; i < movieTitles.length; i += batchSize) {
-    const batch = movieTitles.slice(i, i + batchSize);
-    const values = batch
-      .map(
-        (title, idx) =>
-          `(${i + idx + 1}, '${title.replace(
-            /'/g,
-            "''",
-          )}', 0, '${defaultDate.toISOString()}')`,
-      )
-      .join(",");
+    for (let i = 0; i < movieTitles.length; i += batchSize) {
+      const batch = movieTitles.slice(i, i + batchSize);
+      const values = batch
+        .map(
+          (title, idx) =>
+            `(${i + idx + 1}, '${title.replace(
+              /'/g,
+              "''",
+            )}', 0, '${defaultDate.toISOString()}')`,
+        )
+        .join(",");
 
-    await pool.query(
-      `INSERT INTO movies (id, title, score, last_vote_time) VALUES ${values} ON CONFLICT (id) DO NOTHING`,
-    );
+      await client.query(
+        `INSERT INTO movies (id, title, score, last_vote_time) VALUES ${values} ON CONFLICT (id) DO NOTHING`,
+      );
 
-    console.log(
-      `Inserted ${Math.min(i + batchSize, movieTitles.length)} movies...`,
-    );
+      console.log(
+        `Inserted ${Math.min(i + batchSize, movieTitles.length)} movies...`,
+      );
+    }
+
+    console.log(`Successfully seeded ${movieTitles.length} movies`);
+  } finally {
+    client.end();
+    process.exit();
   }
-
-  console.log(`Successfully seeded ${movieTitles.length} movies`);
-  await closeConnection();
-  process.exit();
 }
 
 main().catch((error) => {
