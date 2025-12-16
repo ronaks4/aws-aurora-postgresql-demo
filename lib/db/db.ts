@@ -25,6 +25,8 @@ const pool = new Pool({
     14 * 60 * 1000,
   ),
   port: Number(process.env.PGPORT),
+  // Recommended to switch to `true` in production.
+  // See https://docs.aws.amazon.com/lambda/latest/dg/services-rds.html#rds-lambda-certificates
   ssl: { rejectUnauthorized: false },
   max: 20,
 });
