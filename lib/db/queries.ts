@@ -1,4 +1,4 @@
-import { getConnection } from "./db";
+import { query } from "./db";
 import { performance } from "perf_hooks";
 
 export interface Movie {
@@ -16,7 +16,6 @@ export interface MoviesResult {
 }
 
 export async function getMovies(sessionId?: string, filter?: string) {
-  const pool = await getConnection();
   const startTime = performance.now();
 
   const params: any[] = [];
@@ -28,7 +27,7 @@ export async function getMovies(sessionId?: string, filter?: string) {
   }
 
   const countQuery = `SELECT COUNT(*) as count FROM movies m ${whereClause}`;
-  const countResult = await pool.query(countQuery, params);
+  const countResult = await query(countQuery, params);
   const totalRecords = parseInt(countResult.rows[0]?.count || "0");
 
   let moviesQuery: string;
@@ -65,7 +64,7 @@ export async function getMovies(sessionId?: string, filter?: string) {
     queryParams = params;
   }
 
-  const result = await pool.query(moviesQuery, queryParams);
+  const result = await query(moviesQuery, queryParams);
 
   const endTime = performance.now();
   const queryTimeMs = (endTime - startTime).toFixed(2);
