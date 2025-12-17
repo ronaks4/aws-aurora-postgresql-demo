@@ -3,7 +3,7 @@ import path from "path";
 import fs from "fs";
 import { Signer } from "@aws-sdk/rds-signer";
 import { awsCredentialsProvider } from "@vercel/functions/oidc";
-import { Client } from "pg";
+import { Pool } from "pg";
 
 dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
 
@@ -18,7 +18,7 @@ async function main() {
       clientConfig: { region: process.env.AWS_REGION! },
     }),
   });
-  const client = new Client({
+  const client = new Pool({
     host: process.env.PGHOST!,
     user: process.env.PGUSER!,
     database: process.env.PGDATABASE || "postgres",
@@ -41,4 +41,7 @@ async function main() {
   }
 }
 
-main();
+main().catch((error) => {
+  console.error("Migration failed:", error);
+  process.exit(1);
+});
